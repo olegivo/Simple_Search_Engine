@@ -3,6 +3,7 @@ package search
 import java.io.File
 
 class SearchEngine {
+    private lateinit var invertedIndex: Map<String, List<String>>
     private lateinit var persons: List<String>
 
     fun inputPeoples() {
@@ -27,7 +28,8 @@ class SearchEngine {
     fun findPerson() {
         println("Enter a name or email to search all suitable people.")
         val query = scanner.nextLine()
-        val searchResults = persons.filter { it.contains(query, ignoreCase = true) }
+        val searchResults = invertedIndex[query.toLowerCase()]
+                ?: emptyList()
         if (searchResults.isEmpty()) {
             println("No matching people found.")
         } else {
@@ -42,6 +44,15 @@ class SearchEngine {
         println("=== List of people ===")
         persons.forEach {
             println(it)
+        }
+    }
+
+    fun buildIndex() {
+        val words = persons.asSequence().flatMap { it.split(' ') }.map { it.toLowerCase() }.distinct()
+        invertedIndex = words.associateWith { word ->
+            persons.mapNotNull { person ->
+                if (person.contains(word, ignoreCase = true)) person else null
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ fun main(args: Array<String>) {
     } ?: run{
         searchEngine.inputPeoples()
     }
+    searchEngine.buildIndex()
 
     while (scanner.hasNextLine()) {
         println("""
